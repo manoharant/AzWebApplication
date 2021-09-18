@@ -20,7 +20,7 @@ namespace AzWebApplication.Controllers
         // The Index method is used to get a list of courses and return it to the view
         public IActionResult Index()
         {
-            IEnumerable<Course> _course_list = _course_service.GetCourses();
+            IEnumerable<Course> _course_list = _course_service.GetCourses().GetAwaiter().GetResult();
             return View(_course_list);
         }
     }

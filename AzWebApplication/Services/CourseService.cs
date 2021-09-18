@@ -1,6 +1,9 @@
 ﻿using AzWebApplication.Models;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Net.Http;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace AzWebApplication.Services
 {
@@ -23,7 +26,7 @@ namespace AzWebApplication.Services
             return new SqlConnection(_builder.ConnectionString);
         }
 
-        public IEnumerable<Course> GetCourses()
+        /*public IEnumerable<Course> GetCourses()
         {
             List<Course> _lst = new List<Course>();
             string _statement = "SELECT CourseID,CourseName,rating from Course";
@@ -49,6 +52,19 @@ namespace AzWebApplication.Services
             }
             _connection.Close();
             return _lst;
+        }*/
+        public async Task<IEnumerable<Course>> GetCourses()
+        {
+            // Here we now make a call to the Azure Function
+            // Make sure to replace the URL with your Azure Function
+            string functionurl = "https://manofuncapp.azurewebsites.net/api/GetCourses?code=pYl8ygQQVsL0bae7ELADrzHKlfYotk3LTEWaaxEthTjSNFOTug8Daw==";
+            // We are using the HttpClient class to send a request to the Azure Function and to get a response
+            using (HttpClient _client = new HttpClient())
+            {
+                HttpResponseMessage _response = await _client.GetAsync(functionurl);
+                string _content = await _response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<IEnumerable<Course>>(_content);
+            }
         }
 
     }
